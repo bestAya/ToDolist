@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../vue.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            list-style:none;
+            box-sizing: border-box;
+        }
+        body,html{
+            width: 100%;
+            height: 100%;
+            background: #cdcdcd;
+        }
+        header{
+           width: 100%;
+            height: 50px;
+            background: rgba(47,47,47,0.98);
+            margin: 12px 0;
+        }
+        .nav{
+            width:600px;
+            height: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+        }
+        .left{
+            width: 100%;
+            height: 100%;
+            font-size: 24px;
+            line-height: 50px;
+            color: #ccc;
+        }
+        .nav>input{
+            width: 360px;
+            height: 30px;
+            outline: none;
+            border: none;
+            border-radius:4px;
+            box-shadow: 0 0 0 0  #000 inset;
+            font-size: 13px;
+            padding-left: 10px;
+        }
+        main{
+            width: 100%;
+            height: auto;
+
+        }
+        main>ul,ol{
+            width:600px;
+            height: auto;
+            margin: 0 auto;
+        }
+        .none{
+            width: 600px;
+            height: 35px;
+            margin: 10px auto 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .none>span{
+            font-size: 30px;
+            color:#000;
+            font-weight: 500;
+        }
+        .none>i{
+            font-style: normal;
+            display: block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e6e6fa;
+            line-height: 20px;
+            color: #666686;
+            font-size: 18px;
+            text-align: center;
+        }
+        li{
+            width: 100%;
+            height: 32px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #fff;
+            border-radius: 4px;
+        }
+        li>input:nth-child(2){
+            width: 505px;
+            height: 100%;
+            padding:5px 0;
+            border: none;
+        }
+        .del{
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 2px solid #666686;
+            background: #fff;
+        }
+        ol>li,ol>li>input{
+            background:slategray;
+        }
+    </style>
+    <script>
+    </script>
+</head>
+<body>
+<main id="ip1">
+    <header>
+        <div class="nav" >
+            <div class="left">ToDoList</div>
+            <input type="text" placeholder="请添加ToDo" @keydown.enter="add(val)"  v-model="val">
+        </div>
+    </header>
+
+    <div class="none"><span>未完成</span><i>{{filter.doing.length}}</i></div>
+    <ul >
+        <li v-for="v in filter.doing">
+            <input type="checkbox" v-model="v.status">
+            <input type="text" v-model="v.concent">
+            <div class="del" @click="del(v.id)"></div>
+        </li>
+    </ul>
+    <div class="none"><span>已完成</span><i>{{filter.donone.length}}</i></div>
+    <ol>
+        <li v-for="v in filter.donone">
+            <input type="checkbox" v-model="v.status">
+            <input type="text" v-model="v.concent">
+            <div class="del" @click="del(v.id)"></div>
+        </li>
+    </ol>
+</main>
+    <script>
+//            let arr=[
+//                {id:1,concent:'未完成',status:false},
+//                {id:2,concent:'未完成',status:false},
+//                {id:3,concent:'已完成',status:true},
+//                {id:4,concent:'未完成',status:false},
+//                {id:5,concent:'已完成',status:true},
+//                {id:6,concent:'已完成',status:true}
+//
+//            ];
+//            localStorage.todo=JSON.stringify(arr)
+            let ip1=new Vue({
+                el:"#ip1",
+                data:{
+                    todos:[],
+                    val:'',
+                    sid:0
+                },
+                computed:{
+                    filter(){
+                        let data={doing:[],donone:[]};
+                        data.doing=this.todos.filter(ele=>ele.status==false);
+                        data.donone=this.todos.filter(ele=>ele.status==true);
+                        return data;
+                    },
+
+                },
+                methods:{
+                    del(ids){
+                        this.todos=this.todos.filter(ele=>ele.id!=ids)
+                    },
+                    add(val){
+                        this.todos.push({id:++this.sid,concent:val,status:false});
+                        this.val='';
+                    }
+
+                },
+                mounted(){
+                    this.todos=JSON.parse(localStorage.todo);
+                    this.sid=this.todos[this.todos.length-1].id;
+                }
+
+            })
+        ip1.$watch('todos',function (){
+                localStorage.todo=JSON.stringify(this.todos);
+            },{deep:true});
+    </script>
+</body>
+</html>
